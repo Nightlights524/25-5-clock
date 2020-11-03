@@ -4,4 +4,33 @@
 body {
   font: 1.1rem futura, sans-serif;
   text-align: center;
+  box-sizing: border-box;
+  user-select: none;
+  margin: 0;
+}
+
+#root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+#clock-container {
+  display: flex;
+  flex-direction: column;
+  color: white;
+  background-color: rgb(27, 102, 71);
+  min-width: 320px;
+  /* width: 50%; */
+  height: 400px;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+#settings-area {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
 }
