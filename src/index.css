@@ -20,6 +20,7 @@ body {
 #clock-container {
   display: flex;
   flex-direction: column;
+  justify-content: space-evenly;
   color: white;
   background-color: rgb(27, 102, 71);
   min-width: 320px;
@@ -33,4 +34,8 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
+}
+
+h1 {
+  margin: 0;
 }

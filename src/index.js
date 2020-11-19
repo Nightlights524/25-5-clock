@@ -30,21 +30,35 @@ function Setting(props) {
   );
 }
 
+function Timer(props) {
+  return (
+    <div id="timer">
+      <div id="timer-label">{props.label}</div>
+      <div id="time-left">{props.value}</div>
+    </div>
+  );
+}
+
 class Clock extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      timerValue: 1500,
       breakLength: 5,
       sessionLength: 25,
       minLength: 1,
       maxLength: 60,
-      timerRunning: false
+      onBreak: false,
+      timerRunning: false,
+      timerIntervalID: ""
     }
     this.changeLength = this.changeLength.bind(this);
+    this.startTimer = this.startTimer.bind(this);
+    this.resetTimer = this.resetTimer.bind(this);
+    this.decrementTimer = this.decrementTimer.bind(this);
+    this.timerDisplay = this.timerDisplay.bind(this);
   }
-
-  // changeLength () {
-    // alert("changeLength()");
+  
   changeLength (setting, sign) {
     if (sign === "+") {
       this.setState(prevState => {
@@ -63,6 +77,52 @@ class Clock extends React.Component {
     } else {
       alert("INVALID SETTING CHANGE!!!");
     }
+    
+    // this.setState({timerValue: });
+  }
+  
+  startTimer() {
+    if (this.state.timerRunning) {
+      clearInterval(this.state.timerIntervalID);
+      this.setState({timerRunning: false});
+    } else {
+      this.setState({
+        timerIntervalID: setInterval(this.decrementTimer, 1000),
+        timerRunning: true
+      });
+    }
+
+  }
+  
+  resetTimer() {
+    clearInterval(this.state.timerIntervalID);
+
+    this.setState({
+      timerValue: 1500,
+      breakLength: 5,
+      sessionLength: 25,
+      minLength: 1,
+      maxLength: 60,
+      onBreak: false,
+      timerRunning: false,
+      timerIntervalID: ""
+    });
+  }
+
+  decrementTimer() {
+    if (this.state.timerValue > 0) {
+      this.setState((prevState) => ({timerValue: prevState.timerValue - 1}));
+    } else {
+      //DO SOMETHING WHEN TIMER HITS 0
+    }
+  }
+
+  timerDisplay() {
+    let timeRemaining = this.state.timerValue;
+    let minutes = Math.floor(timeRemaining / 60);
+    let seconds = timeRemaining - (minutes * 60);
+
+    return minutes.toString() + ":" + seconds.toString();
   }
   
   render() {  
@@ -90,6 +150,14 @@ class Clock extends React.Component {
             settingValueID="break-length"
             onClick={this.changeLength}
           />
+        </div>
+        <Timer
+          label="Timer"
+          value={this.timerDisplay()}
+        />
+        <div id="controls-area">
+          <button id="start_stop" onClick={this.startTimer}>Start/Stop</button>
+          <button id="reset" onClick={this.resetTimer}>Reset</button>
         </div>
       </div>
     );
