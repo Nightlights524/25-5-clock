@@ -1,13 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-
-// const Stateless = props => {
-  //   return (
-    //     <div>
-    //     </div>
-    //   );
-    // }
     
 function Setting(props) {
   return (
@@ -149,12 +142,10 @@ class Clock extends React.Component {
   setTimerValue(settingName) {
     if ((this.state.onBreak && settingName === "sessionLength") ||
         (!this.state.onBreak && settingName === "breakLength")) {
-        
       return;
     }
 
     let value = this.state.onBreak ? this.state.breakLength * 60 : this.state.sessionLength * 60;
-
     this.setState({timerValue: value});
   }
   
