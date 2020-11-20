@@ -13,19 +13,21 @@ function Setting(props) {
   return (
     <div class="setting">
       <div id={props.labelID}>{props.label}</div>
-      <button 
-        id={props.decrementID}
-        onClick={() => props.onClick(props.settingName, "-")}
-        >
-        <i class="fas fa-arrow-down"></i>
-      </button>
-      <div id={props.settingValueID}>{props.settingValue}</div>
-      <button
-        id={props.incrementID}
-        onClick={() => props.onClick(props.settingName, "+")}
-      >
-        <i class="fas fa-arrow-up"></i>
-      </button>
+      <div id="setting-controls">
+        <button 
+          id={props.decrementID}
+          onClick={() => props.onClick(props.settingName, "-")}
+          >
+          <i class="fas fa-arrow-down"></i>
+        </button>
+        <div id={props.settingValueID}>{props.settingValue}</div>
+        <button
+          id={props.incrementID}
+          onClick={() => props.onClick(props.settingName, "+")}
+          >
+          <i class="fas fa-arrow-up"></i>
+        </button>
+      </div>
     </div>
   );
 }
@@ -42,6 +44,7 @@ function Timer(props) {
 class Clock extends React.Component {
   constructor(props) {
     super(props);
+    this.timerBeep = React.createRef();
     this.state = {
       timerValue: 1500,
       breakLength: 5,
@@ -57,28 +60,32 @@ class Clock extends React.Component {
     this.resetTimer = this.resetTimer.bind(this);
     this.decrementTimer = this.decrementTimer.bind(this);
     this.timerDisplay = this.timerDisplay.bind(this);
+    this.timerLabel = this.timerLabel.bind(this);
+    this.setTimerValue = this.setTimerValue.bind(this);
   }
   
-  changeLength (setting, sign) {
+  changeLength (settingName, sign) {
+    if (this.state.timerRunning) {
+      return;
+    }
+
     if (sign === "+") {
       this.setState(prevState => {
-        if (prevState[setting] < prevState.maxLength) {
-          return {[setting]: prevState[setting] + 1};
+        if (prevState[settingName] < prevState.maxLength) {
+          return {[settingName]: prevState[settingName] + 1};
         }
         return prevState
-      });
+      }, () => this.setTimerValue(settingName));
     } else if (sign === "-") {
       this.setState(prevState => {
-        if (prevState[setting] > prevState.minLength) {
-          return {[setting]: prevState[setting] - 1};
+        if (prevState[settingName] > prevState.minLength) {
+          return {[settingName]: prevState[settingName] - 1};
         }
         return prevState;
-      });
+      }, () => this.setTimerValue(settingName));
     } else {
       alert("INVALID SETTING CHANGE!!!");
     }
-    
-    // this.setState({timerValue: });
   }
   
   startTimer() {
@@ -91,7 +98,6 @@ class Clock extends React.Component {
         timerRunning: true
       });
     }
-
   }
   
   resetTimer() {
@@ -107,22 +113,49 @@ class Clock extends React.Component {
       timerRunning: false,
       timerIntervalID: ""
     });
+
+    this.timerBeep.current.pause();
+    this.timerBeep.current.currentTime = 0;
   }
 
   decrementTimer() {
     if (this.state.timerValue > 0) {
       this.setState((prevState) => ({timerValue: prevState.timerValue - 1}));
     } else {
-      //DO SOMETHING WHEN TIMER HITS 0
+      if (this.state.onBreak) {
+        this.setState({timerValue: this.state.sessionLength * 60});
+      } else {
+        this.setState({timerValue: this.state.breakLength * 60});
+      }
+      this.setState((prevState) => ({onBreak: !prevState.onBreak}));
+      this.timerBeep.current.play();
     }
   }
 
   timerDisplay() {
-    let timeRemaining = this.state.timerValue;
-    let minutes = Math.floor(timeRemaining / 60);
-    let seconds = timeRemaining - (minutes * 60);
+    let minutes = Math.floor(this.state.timerValue / 60);
+    let seconds = this.state.timerValue - (minutes * 60);
+    
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    seconds = seconds < 10 ? '0' + seconds : seconds;
 
     return minutes.toString() + ":" + seconds.toString();
+  }
+
+  timerLabel() {
+    return this.state.onBreak ? "Break" : "Session";
+  }
+
+  setTimerValue(settingName) {
+    if ((this.state.onBreak && settingName === "sessionLength") ||
+        (!this.state.onBreak && settingName === "breakLength")) {
+        
+      return;
+    }
+
+    let value = this.state.onBreak ? this.state.breakLength * 60 : this.state.sessionLength * 60;
+
+    this.setState({timerValue: value});
   }
   
   render() {  
@@ -152,13 +185,21 @@ class Clock extends React.Component {
           />
         </div>
         <Timer
-          label="Timer"
+          label={this.timerLabel()}
           value={this.timerDisplay()}
         />
         <div id="controls-area">
           <button id="start_stop" onClick={this.startTimer}>Start/Stop</button>
           <button id="reset" onClick={this.resetTimer}>Reset</button>
         </div>
+        <audio 
+          id="beep"
+          ref={this.timerBeep}
+          src="https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav"
+        >
+          Your browser does not support the
+          <code>audio</code> element.
+        </audio>
       </div>
     );
   }
