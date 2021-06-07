@@ -1,0 +1,86 @@
+.clockContainer {
+  font: 1rem futura, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  color: white;
+  background-color: rgb(27, 102, 71);
+  min-height: 400px;
+  padding: 20px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  user-select: none;
+}
+
+.settingsArea {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.setting {
+  padding: 1rem;
+}
+
+.settingControls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  margin-top: 5px;
+}
+
+.title {
+  font: 2rem futura;
+  font-family: futura;
+  margin: 0;
+}
+
+.timer {
+  font-size: 2rem;
+  padding-bottom: 1rem;
+}
+
+.controlsArea {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.button {
+  cursor: pointer;
+  border: 1px solid #333;
+  border-radius: 3px;
+  background-color: #eee;
+  transition: 0.1s;
+  padding: 2px 8px;
+}
+
+.button:hover {
+  background-color: #ddd;
+}
+
+.button:active {
+  background-color: #eee;
+}
+
+@media (max-width: 300px) {
+  .clockContainer {
+    min-width: 0;
+  }
+
+  .title {
+    padding-bottom: 1rem;
+  }
+
+  .settingsArea {
+    flex-direction: column;
+  }
+
+  .setting {
+    padding-top: 0;
+  }
+}
